@@ -4,14 +4,16 @@
 
 const CONFIG = {
   // ——— Google Apps Script Web App URL ———
-  // After deploying your Apps Script, paste the URL here:
-  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzDZn6j_mWRnI0RV3OcBUKOWN1OlPBwyh0IYKU0nSI9lQ8fxZkdzq0ZhATj4f-8yZkO/exec',
+  // The URL is base64 encoded to easily hide it from casual inspection.
+  // To change your URL, use btoa("YOUR_URL") in the browser console.
+  _O_URL: 'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J3bmRXdm9SWWxUekpGdzNuQWhfNFVfckdxTi1RRFk3a3h3cTU3OVBvbzFqbmZnZTBrcEdRRU9vZmdzTjREUXlndzMvZXhlYw==',
+
+  getAppUrl() {
+    return atob(this._O_URL);
+  },
 
   // Set to false once you've connected a real Google Sheet
   USE_DEMO_DATA: false,
-
-  // Director PIN (change this!)
-  PIN: '1234',
 
   // Division & Group definitions
   DIVISIONS: {
