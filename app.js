@@ -155,23 +155,28 @@ const DEMO_DATA = {
 // SheetAPI — Google Sheets integration
 // ============================================
 class SheetAPI {
-  constructor(url) {
+  constructor(url, pin) {
     this.url = url;
+    this.pin = pin;
   }
 
   async get(action, params = {}) {
-    const queryStr = new URLSearchParams({ action, ...params }).toString();
+    const queryStr = new URLSearchParams({ action, pin: this.pin, ...params }).toString();
     const res = await fetch(`${this.url}?${queryStr}`);
-    return res.json();
+    const data = await res.json();
+    if (data.error === 'Invalid PIN') throw new Error('Invalid PIN');
+    return data;
   }
 
   async post(action, data) {
     const res = await fetch(this.url, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ action, ...data })
+      body: JSON.stringify({ action, pin: this.pin, ...data })
     });
-    return res.json();
+    const result = await res.json();
+    if (result.error === 'Invalid PIN') throw new Error('Invalid PIN');
+    return result;
   }
 }
 
@@ -194,7 +199,7 @@ class DashboardApp {
     this.searchQuery = '';
 
     // API
-    this.api = CONFIG.APPS_SCRIPT_URL ? new SheetAPI(CONFIG.APPS_SCRIPT_URL) : null;
+    this.api = null; // Instantiated after successful PIN
 
     // Init
     this.cacheDOM();
@@ -415,18 +420,55 @@ class DashboardApp {
 
   verifyPin() {
     const pin = Array.from(this.pinInputs).map(i => i.value).join('');
-    if (pin === CONFIG.PIN) {
-      sessionStorage.setItem('cm_auth', 'true');
-      this.pinError.textContent = '';
-      this.unlockApp();
-    } else {
-      this.pinError.textContent = 'Incorrect PIN. Please try again.';
-      this.pinInputs.forEach(i => { i.value = ''; });
-      this.pinInputs[0].focus();
-      this.pinOverlay.querySelector('.pin-box').style.animation = 'none';
-      void this.pinOverlay.querySelector('.pin-box').offsetWidth;
-      this.pinOverlay.querySelector('.pin-box').style.animation = '';
+    
+    // We now instantiate the API with the entered PIN
+    this.api = CONFIG._O_URL ? new SheetAPI(CONFIG.getAppUrl(), pin) : null;
+    
+    if (CONFIG.USE_DEMO_DATA) {
+      if (pin === '1234') { // Fallback demo PIN
+        sessionStorage.setItem('cm_auth', 'true');
+        sessionStorage.setItem('cm_pin', pin);
+        this.pinError.textContent = '';
+        this.unlockApp();
+      } else {
+        this.showPinError();
+      }
+      return;
     }
+
+    // Actually check with the backend
+    this.btnPinSubmit.textContent = 'Verifying...';
+    this.btnPinSubmit.disabled = true;
+
+    this.api.get('verifyPin')
+      .then(res => {
+        if (res.success) {
+          sessionStorage.setItem('cm_auth', 'true');
+          sessionStorage.setItem('cm_pin', pin);
+          this.pinError.textContent = '';
+          this.unlockApp();
+        } else {
+          this.showPinError();
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        this.showPinError();
+        this.showToast('Failed to connect to backend', 'error');
+      })
+      .finally(() => {
+        this.btnPinSubmit.textContent = 'Unlock Dashboard';
+        this.btnPinSubmit.disabled = false;
+      });
+  }
+
+  showPinError() {
+    this.pinError.textContent = 'Incorrect PIN. Please try again.';
+    this.pinInputs.forEach(i => { i.value = ''; });
+    this.pinInputs[0].focus();
+    this.pinOverlay.querySelector('.pin-box').style.animation = 'none';
+    void this.pinOverlay.querySelector('.pin-box').offsetWidth;
+    this.pinOverlay.querySelector('.pin-box').style.animation = '';
   }
 
   unlockApp() {
@@ -437,10 +479,12 @@ class DashboardApp {
 
   logout() {
     sessionStorage.removeItem('cm_auth');
+    sessionStorage.removeItem('cm_pin');
     this.pinOverlay.classList.remove('hidden');
     this.appContainer.style.display = 'none';
     this.pinInputs.forEach(i => { i.value = ''; });
     this.pinInputs[0].focus();
+    this.api = null;
   }
 
   // ——— Data ———
