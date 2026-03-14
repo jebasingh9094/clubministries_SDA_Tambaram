@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Club Ministries Director Dashboard — Track member progress across Adventurers and Pathfinders divisions">
+  <title>Club Ministries Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛺</text></svg>">
+</head>
+<body>
+
+  <!-- ====== PIN Lock Screen ====== -->
+  <div class="pin-overlay" id="pinOverlay">
+    <div class="pin-box">
+      <div class="logo">🏕️</div>
+      <h1>Club Ministries</h1>
+      <p>Enter your PIN to access the dashboard</p>
+      <div class="pin-input-group" id="pinInputGroup">
+        <input type="number" maxlength="1" min="0" max="9" data-pin="0" id="pin0" autofocus>
+        <input type="number" maxlength="1" min="0" max="9" data-pin="1" id="pin1">
+        <input type="number" maxlength="1" min="0" max="9" data-pin="2" id="pin2">
+        <input type="number" maxlength="1" min="0" max="9" data-pin="3" id="pin3">
+      </div>
+      <div class="pin-error" id="pinError"></div>
+      <button class="btn-pin" id="btnPinSubmit">Unlock Dashboard</button>
+    </div>
+  </div>
+
+  <!-- ====== Mobile Menu Button ====== -->
+  <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+
+  <!-- ====== App Container ====== -->
+  <div class="app-container" id="appContainer" style="display:none;">
+
+    <!-- ——— Sidebar ——— -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand">
+          <span class="brand-icon">🏕️</span>
+          <div class="brand-text">
+            <h2>Club Ministries</h2>
+            <span>Director Dashboard</span>
+          </div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav" id="sidebarNav">
+        <div class="nav-item active" data-view="dashboard" id="navDashboard">
+          <span class="item-dot"></span>
+          <span>Dashboard</span>
+        </div>
+
+        <!-- Adventurers Section -->
+        <div class="nav-section" id="navAdventurers">
+          <div class="nav-section-title" data-division="Adventurers">
+            <span class="section-icon">⛺</span>
+            <span>Adventurers</span>
+            <span class="section-badge">6</span>
+          </div>
+          <div class="nav-items-list">
+            <div class="nav-item" data-division="Adventurers" data-group="LITTLE LAMB">
+              <span class="item-dot"></span>
+              <span>Little Lamb</span>
+              <span class="item-count" id="count-LITTLE-LAMB">0</span>
+            </div>
+            <div class="nav-item" data-division="Adventurers" data-group="EAGER BEAVER">
+              <span class="item-dot"></span>
+              <span>Eager Beaver</span>
+              <span class="item-count" id="count-EAGER-BEAVER">0</span>
+            </div>
+            <div class="nav-item" data-division="Adventurers" data-group="BUSY BEE">
+              <span class="item-dot"></span>
+              <span>Busy Bee</span>
+              <span class="item-count" id="count-BUSY-BEE">0</span>
+            </div>
+            <div class="nav-item" data-division="Adventurers" data-group="SUNBEAM">
+              <span class="item-dot"></span>
+              <span>Sunbeam</span>
+              <span class="item-count" id="count-SUNBEAM">0</span>
+            </div>
+            <div class="nav-item" data-division="Adventurers" data-group="BUILDER">
+              <span class="item-dot"></span>
+              <span>Builder</span>
+              <span class="item-count" id="count-BUILDER">0</span>
+            </div>
+            <div class="nav-item" data-division="Adventurers" data-group="HELPING HAND">
+              <span class="item-dot"></span>
+              <span>Helping Hand</span>
+              <span class="item-count" id="count-HELPING-HAND">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pathfinders Section -->
+        <div class="nav-section" id="navPathfinders">
+          <div class="nav-section-title" data-division="Pathfinders">
+            <span class="section-icon">🧭</span>
+            <span>Pathfinders</span>
+            <span class="section-badge">6</span>
+          </div>
+          <div class="nav-items-list">
+            <div class="nav-item" data-division="Pathfinders" data-group="FRIEND">
+              <span class="item-dot"></span>
+              <span>Friend</span>
+              <span class="item-count" id="count-FRIEND">0</span>
+            </div>
+            <div class="nav-item" data-division="Pathfinders" data-group="COMPANION">
+              <span class="item-dot"></span>
+              <span>Companion</span>
+              <span class="item-count" id="count-COMPANION">0</span>
+            </div>
+            <div class="nav-item" data-division="Pathfinders" data-group="EXPLORER">
+              <span class="item-dot"></span>
+              <span>Explorer</span>
+              <span class="item-count" id="count-EXPLORER">0</span>
+            </div>
+            <div class="nav-item" data-division="Pathfinders" data-group="RANGER">
+              <span class="item-dot"></span>
+              <span>Ranger</span>
+              <span class="item-count" id="count-RANGER">0</span>
+            </div>
+            <div class="nav-item" data-division="Pathfinders" data-group="VOYAGER">
+              <span class="item-dot"></span>
+              <span>Voyager</span>
+              <span class="item-count" id="count-VOYAGER">0</span>
+            </div>
+            <div class="nav-item" data-division="Pathfinders" data-group="GUIDE">
+              <span class="item-dot"></span>
+              <span>Guide</span>
+              <span class="item-count" id="count-GUIDE">0</span>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="btn-add-member" id="btnAddMember">
+          <span>+</span>
+          <span>Add Member</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ——— Main Content ——— -->
+    <main class="main-content">
+
+      <!-- Top Bar -->
+      <div class="top-bar">
+        <div class="top-bar-left">
+          <h1 id="pageTitle">Dashboard</h1>
+          <p id="pageSubtitle">Overview of all divisions and groups</p>
+        </div>
+        <div class="top-bar-right">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="Search members..." id="searchInput">
+          </div>
+          <button class="btn-logout" id="btnLogout">🔒 Lock</button>
+        </div>
+      </div>
+
+      <!-- ====== Dashboard View ====== -->
+      <div class="view active" id="viewDashboard">
+        <!-- Overview Cards -->
+        <div class="overview-grid" id="overviewGrid">
+          <!-- Cards rendered by JS -->
+        </div>
+
+        <!-- Division Breakdown -->
+        <div class="section-header">
+          <h2>Division Progress</h2>
+        </div>
+        <div class="overview-grid" id="divisionGrid">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- ====== Group View (Member List) ====== -->
+      <div class="view" id="viewGroup">
+        <div class="section-header">
+          <h2 id="groupTitle">Members</h2>
+        </div>
+        <div class="member-table-wrap">
+          <table class="member-table">
+            <thead>
+              <tr>
+                <th>Member</th>
+                <th>Group</th>
+                <th>Division</th>
+                <th>Progress</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="memberTableBody">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+        <div class="empty-state" id="emptyMembers" style="display:none;">
+          <div class="empty-icon">👥</div>
+          <h3>No members found</h3>
+          <p>Add members using the button in the sidebar</p>
+        </div>
+      </div>
+
+      <!-- ====== Member Detail View ====== -->
+      <div class="view" id="viewDetail">
+        <div class="detail-header">
+          <div class="detail-header-left">
+            <div class="detail-avatar" id="detailAvatar">JD</div>
+            <div class="detail-info">
+              <h2 id="detailName">John Doe</h2>
+              <p id="detailMeta">Adventurers · LITTLE LAMB</p>
+            </div>
+          </div>
+          <button class="btn-back" id="btnBack">
+            ← Back
+          </button>
+        </div>
+
+        <!-- Progress summary -->
+        <div class="overview-grid" style="margin-bottom:1.5rem;">
+          <div class="stat-card" style="--card-accent: var(--status-completed)">
+            <div class="card-value" id="detailCompleted">0</div>
+            <div class="card-label">Completed</div>
+          </div>
+          <div class="stat-card" style="--card-accent: var(--status-in-progress)">
+            <div class="card-value" id="detailInProgress">0</div>
+            <div class="card-label">In Progress</div>
+          </div>
+          <div class="stat-card" style="--card-accent: var(--status-not-started)">
+            <div class="card-value" id="detailNotStarted">0</div>
+            <div class="card-label">Not Started</div>
+          </div>
+          <div class="stat-card" style="--card-accent: var(--accent-adventurer)">
+            <div class="card-value" id="detailPercent">0%</div>
+            <div class="card-label">Overall</div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" id="detailProgressBar" style="width:0%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Requirements Checklist -->
+        <div class="section-header">
+          <h2>Requirements Checklist</h2>
+          <button class="btn-secondary" id="btnAssignReq" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;">+ Assign Requirement</button>
+        </div>
+        <div id="reqChecklist">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ====== Add/Edit Member Modal ====== -->
+  <div class="modal-overlay" id="memberModal">
+    <div class="modal">
+      <h2 id="modalTitle">Add New Member</h2>
+      <form id="memberForm">
+        <input type="hidden" id="editMemberId">
+        <div class="form-group">
+          <label for="memberName">Full Name</label>
+          <input type="text" id="memberName" placeholder="Enter member name" required>
+        </div>
+        <div class="form-group">
+          <label for="memberDivision">Division</label>
+          <select id="memberDivision" required>
+            <option value="">Select Division</option>
+            <option value="Adventurers">Adventurers</option>
+            <option value="Pathfinders">Pathfinders</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="memberGroup">Group</label>
+          <select id="memberGroup" required>
+            <option value="">Select Group</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="memberJoinDate">Join Date</label>
+          <input type="date" id="memberJoinDate">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" id="btnCancelModal">Cancel</button>
+          <button type="button" class="btn-danger" id="btnDeleteMember" style="display:none;">Delete</button>
+          <button type="submit" class="btn-primary" id="btnSaveMember">Add Member</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ====== Assign Requirement Modal ====== -->
+  <div class="modal-overlay" id="assignReqModal">
+    <div class="modal" style="width: 500px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 style="margin: 0;">Assign Requirement</h2>
+        <button class="btn-secondary" id="btnOpenCreateReq" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;">+ Create New</button>
+      </div>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem; margin-top: -1rem;">Select requirements to add to <strong id="assignReqMemberName" style="color: var(--text-primary);">Member</strong>'s checklist.</p>
+      
+      <div class="form-group">
+        <label for="assignReqSearch">Search Requirements</label>
+        <div class="search-box" style="width: 100%;">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Search by name or category..." id="assignReqSearch" style="width: 100%;">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Available Requirements</label>
+        <div id="assignReqList" style="max-height: 300px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-card); padding: 0.5rem;">
+          <!-- Rendered by JS -->
+        </div>
+        <div class="empty-state" id="assignReqEmpty" style="display:none; padding: 1.5rem 1rem;">
+          <p>No requirements found.</p>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" id="btnCancelAssignReq">Cancel</button>
+        <button type="button" class="btn-primary" id="btnSaveAssignReq">Assign Selected</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== Create Requirement Modal ====== -->
+  <div class="modal-overlay" id="createReqModal">
+    <div class="modal" style="width: 400px;">
+      <h2>Create Requirement</h2>
+      <form id="createReqForm">
+        <div class="form-group">
+          <label for="newReqName">Requirement Name</label>
+          <input type="text" id="newReqName" placeholder="e.g. Bring a friend to church" required>
+        </div>
+        <div class="form-group">
+          <label for="newReqCategory">Category</label>
+          <input type="text" id="newReqCategory" placeholder="e.g. Basic, Spiritual, Nature" required list="categoryList">
+          <datalist id="categoryList">
+            <option value="Basic">
+            <option value="Spiritual">
+            <option value="Nature">
+            <option value="Service">
+            <option value="Life Skills">
+            <option value="Honor">
+            <option value="Leadership">
+            <option value="Outdoor">
+            <option value="Social">
+          </datalist>
+        </div>
+        <div class="form-group">
+          <label for="newReqDivision">Division</label>
+          <select id="newReqDivision" required>
+            <option value="">Select Division</option>
+            <option value="Adventurers">Adventurers</option>
+            <option value="Pathfinders">Pathfinders</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="newReqGroup">Group</label>
+          <select id="newReqGroup" required>
+            <option value="">Select Group</option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" id="btnCancelCreateReq">Cancel</button>
+          <button type="submit" class="btn-primary" id="btnSaveCreateReq">Create & Assign</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ====== Toast Container ====== -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Scripts -->
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
